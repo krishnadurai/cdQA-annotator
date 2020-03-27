@@ -49,7 +49,7 @@
       <b-form-input v-model="question" type="text" placeholder="Type question here..."></b-form-input>
       <br>
 
-      <b-form-input v-model="answer" type="text" placeholder="Type answer here..."></b-form-input>
+      <b-form-input v-model="answer" type="text" disabled="true" placeholder="Answer's shown here..."></b-form-input>
       <br>
 
       <b-button :size="''" :variant="'secondary'" v-on:click="addAnnotation()">Add annotation</b-button> or 
