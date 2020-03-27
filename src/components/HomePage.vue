@@ -22,6 +22,10 @@
       </p>
       <json-viewer :value="jsonData" :expand-depth="10" copyable></json-viewer>
       <br>
+      <div class="annotatorName">
+        Enter annotator's name:
+        <b-form-input v-model="annotatorName" type="text" required="true"></b-form-input>
+      </div>
       <div class="uploadBar">
         <b-form-file
           v-model="file"
@@ -31,12 +35,13 @@
         ></b-form-file>
       </div>
       <br>
-      <b-button :size="''" :variant="'primary'" v-on:click="readFile()">Upload</b-button>
+      <b-button :size="''" :variant="'primary'" v-on:click="readFile()" :disabled="!this.annotatorName">Upload</b-button>
     </div>
   </div>
 </template>
 
 <script>
+import { store } from "../main.js";
 import AnnotationsPage from "./AnnotationsPage.vue";
 
 export default {
@@ -79,6 +84,7 @@ export default {
         this.fileUploaded = true;
       }.bind(this);
       reader.readAsText(this.file);
+      store.state.annotatorName = this.annotatorName;
     }
   },
   components: {

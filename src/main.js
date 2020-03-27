@@ -20,9 +20,20 @@ import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 Vue.config.productionTip = false
 
+export var store = {
+  debug: true,
+  state: {
+    annotatorName: ""
+  },
+}
+
 new Vue({
   render: h => h(App),
-  directives: { selection }
+  directives: { selection },
+  data: {
+    privateState: {},
+    sharedState: store.state
+  }
 }).$mount('#app')
 
 
