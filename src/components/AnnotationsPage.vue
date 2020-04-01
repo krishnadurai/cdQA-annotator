@@ -52,19 +52,7 @@
       <b-form-input v-model="answer" type="text" disabled="true" placeholder="Answer's shown here..."></b-form-input>
       <br>
 
-      <b-button :size="''" :variant="'secondary'" v-on:click="addAnnotation()">Add annotation</b-button> or 
-      <b-button
-        v-if="context_number < json.data[data_number - 1].paragraphs.length"
-        :size="''"
-        :variant="'danger'"
-        v-on:click="delete_paragraph()"
-      >Delete paragraph</b-button>
-      <b-button
-        v-else
-        :size="''"
-        :variant="'danger'"
-        v-on:click="delete_paragraph(), data_number += 1, context_number = 1"
-      >Delete paragraph</b-button>
+      <b-button :size="''" :variant="'secondary'" v-on:click="addAnnotation()">Add annotation</b-button>
       <br>
       <br>
 
@@ -167,10 +155,6 @@ export default {
     },
     getSelection: function(fixStr) {
       this.answer = fixStr;
-    },
-    delete_paragraph: function() {
-      var paragraph_container = this.json.data[this.data_number - 1].paragraphs;
-      paragraph_container.splice([this.context_number - 1], 1);
     },
     delete_empty_document: function() {
       for (var i in this.json.data) {
