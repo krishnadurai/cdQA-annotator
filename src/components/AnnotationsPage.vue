@@ -63,21 +63,29 @@
       </b-table>
       <br>
 
-      <div v-if="data_number > 1 && context_number == 1">
+      <div v-if="data_number > 1 && context_number == 1 && json.data[data_number - 1].paragraphs.length == 1">
         <b-button
           :size="''"
           :variant="'outline-secondary'"
-          v-on:click="data_number -= 1, context_number = json.data[data_number - 1].paragraphs.length"
+          v-on:click="data_number -= 1, context_number = json.data[data_number - 1].paragraphs.length, updateStorageCounters()"
         >Previous</b-button> or 
-        <b-button :size="''" :variant="'outline-primary'" v-on:click="context_number += 1">Next</b-button>
+        <b-button :size="''" :variant="'outline-primary'" v-on:click="data_number += 1, context_number = 1, updateStorageCounters()">Next</b-button>
+      </div>
+      <div v-else-if="data_number > 1 && context_number == 1">
+        <b-button
+          :size="''"
+          :variant="'outline-secondary'"
+          v-on:click="data_number -= 1, context_number = json.data[data_number - 1].paragraphs.length, updateStorageCounters()"
+        >Previous</b-button> or 
+        <b-button :size="''" :variant="'outline-primary'" v-on:click="context_number += 1, updateStorageCounters()">Next</b-button>
       </div>
       <div v-else-if="context_number < json.data[data_number - 1].paragraphs.length">
         <b-button
           :size="''"
           :variant="'outline-secondary'"
-          v-on:click="context_number -= 1"
+          v-on:click="context_number -= 1, updateStorageCounters()"
         >Previous</b-button> or 
-        <b-button :size="''" :variant="'outline-primary'" v-on:click="context_number += 1">Next</b-button>
+        <b-button :size="''" :variant="'outline-primary'" v-on:click="context_number += 1, updateStorageCounters()">Next</b-button>
       </div>
       <div v-else>
         <b-button
@@ -88,7 +96,7 @@
         <b-button
           :size="''"
           :variant="'outline-primary'"
-          v-on:click="data_number += 1, context_number = 1"
+          v-on:click="data_number += 1, context_number = 1, updateStorageCounters()"
         >Next</b-button>
       </div>
       <br>
@@ -125,8 +133,8 @@ export default {
   props: ["json"],
   data: function() {
     return {
-      data_number: 1,
-      context_number: 1,
+      data_number: parseInt(localStorage.getItem("data_number")),
+      context_number: parseInt(localStorage.getItem("context_number")),
       question: "",
       answer: "",
       fields: ["Questions", "Answers", "Edit"],
@@ -162,6 +170,10 @@ export default {
           this.json.data.splice(i, 1);
         }
       }
+    },
+    updateStorageCounters: function() {
+      localStorage.setItem("data_number", this.data_number);
+      localStorage.setItem("context_number", this.context_number);
     }
   },
   computed: {
