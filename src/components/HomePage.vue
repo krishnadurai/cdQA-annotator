@@ -89,6 +89,7 @@ export default {
       var reader = new FileReader();
       reader.onload = function(event) {
         localStorage.setItem("json_file", event.target.result);
+        localStorage.setItem("json_file_name", this.file.name);
         this.json = JSON.parse(event.target.result);
         localStorage.setItem("data_number", 1);
         localStorage.setItem("context_number", 1);

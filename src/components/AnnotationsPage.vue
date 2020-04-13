@@ -28,7 +28,7 @@
                 v-on:click="delete_empty_document()"
                 v-download-data="valid_json"
                 v-download-data:type="'json'"
-                v-download-data:filename="'cdqa-v1.1.json'"
+                v-download-data:filename="getDownloadFileName()"
               >Download</b-button>
             </b-nav-item>
           </b-navbar-nav>
@@ -174,7 +174,11 @@ export default {
     updateStorageCounters: function() {
       localStorage.setItem("data_number", this.data_number);
       localStorage.setItem("context_number", this.context_number);
-    }
+    },
+    getDownloadFileName: function() {
+      var json_file_name = localStorage.getItem("json_file_name");
+      return json_file_name.slice(0, -5) + "_labeled.json";
+    },
   },
   computed: {
     valid_json: function() {
