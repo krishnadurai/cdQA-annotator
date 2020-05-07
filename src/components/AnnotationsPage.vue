@@ -57,8 +57,16 @@
       <br>
 
       <b-table striped hover :items="items" :fields="fields">
-        <template slot="Edit" slot-scope="row">
-          <b-button :size="''" :variant="'danger'" @click.stop="deleteAnnotation(row.index)">Delete</b-button>
+        <template slot="Validate" slot-scope="row">
+          <b-form-group>
+            <b-form-radio-group id="validation" v-model="row.item.Validation" name="validation">
+              <b-form-radio v-on:change="addVerification(row.index, 'good')" value="good">Good</b-form-radio>
+              <br>
+              <b-form-radio v-on:change="addVerification(row.index, 'bad')" value="bad">Bad</b-form-radio>
+              <br>
+              <b-form-radio v-on:change="addVerification(row.index, 'ugly')" value="ugly">Ugly</b-form-radio>
+            </b-form-radio-group>
+          </b-form-group>
         </template>
       </b-table>
       <br>
@@ -137,7 +145,7 @@ export default {
       context_number: parseInt(localStorage.getItem("context_number")),
       question: "",
       answer: "",
-      fields: ["Questions", "Answers", "Edit"],
+      fields: ["Questions", "Answers", "Validate"],
       query: ""
     };
   },
@@ -160,6 +168,13 @@ export default {
         this.context_number - 1
       ];
       paragraph_container.qas.splice(row_index, 1);
+    },
+    addVerification: function(row_index, validation) {
+      var paragraph_container = this.json.data[this.data_number - 1].paragraphs[
+        this.context_number - 1
+      ];
+      paragraph_container.qas[row_index].validation = validation;
+      console.log(paragraph_container.qas[row_index].validation);
     },
     getSelection: function(fixStr) {
       this.answer = fixStr;
@@ -202,9 +217,11 @@ export default {
       ];
       var items = [];
       for (var i = 0; i < paragraph_container.qas.length; i++) {
+        console.log(paragraph_container.qas[i]);
         var item = {
           Questions: paragraph_container.qas[i].question,
-          Answers: paragraph_container.qas[i].answers[0].text
+          Answers: paragraph_container.qas[i].answers[0].text,
+          Validation: paragraph_container.qas[i].validation || 'none'
         };
         items.push(item);
       }
