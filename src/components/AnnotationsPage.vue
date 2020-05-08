@@ -25,7 +25,7 @@
               <b-button
                 :size="'sm'"
                 :variant="'primary'"
-                v-on:click="delete_empty_document()"
+                v-on:click="delete_empty_document(),updateJsonFile()"
                 v-download-data="valid_json"
                 v-download-data:type="'json'"
                 v-download-data:filename="getDownloadFileName()"
@@ -64,9 +64,12 @@
               <br>
               <b-form-radio v-on:change="addVerification(row.index, 'bad')" value="bad">Bad</b-form-radio>
               <br>
-              <b-form-radio v-on:change="addVerification(row.index, 'ugly')" value="ugly">Ugly</b-form-radio>
+              <b-form-radio v-on:change="addVerification(row.index, 'unsure')" value="unsure">Unsure</b-form-radio>
             </b-form-radio-group>
           </b-form-group>
+          Explain your choice
+          <br>
+          <b-form-textarea v-model="row.item.Comment" v-on:change="addComment(row.index, row.item.Comment)" type="text"></b-form-textarea>
         </template>
       </b-table>
       <br>
@@ -122,7 +125,7 @@
       <b-button
         :size="''"
         :variant="'primary'"
-        v-on:click="delete_empty_document()"
+        v-on:click="delete_empty_document(),updateJsonFile()"
         v-download-data="valid_json"
         v-download-data:type="'json'"
         v-download-data:filename="getDownloadFileName()"
@@ -169,12 +172,17 @@ export default {
       ];
       paragraph_container.qas.splice(row_index, 1);
     },
+    addComment: function(row_index, val_comment) {
+      var paragraph_container = this.json.data[this.data_number - 1].paragraphs[
+        this.context_number - 1
+      ];
+      paragraph_container.qas[row_index].val_comment = val_comment;
+    },
     addVerification: function(row_index, validation) {
       var paragraph_container = this.json.data[this.data_number - 1].paragraphs[
         this.context_number - 1
       ];
       paragraph_container.qas[row_index].validation = validation;
-      console.log(paragraph_container.qas[row_index].validation);
     },
     getSelection: function(fixStr) {
       this.answer = fixStr;
@@ -189,6 +197,9 @@ export default {
     updateStorageCounters: function() {
       localStorage.setItem("data_number", this.data_number);
       localStorage.setItem("context_number", this.context_number);
+    },
+    updateJsonFile: function() {
+      localStorage.setItem("json_file", JSON.stringify(this.json));
     },
     getDownloadFileName: function() {
       var json_file_name = localStorage.getItem("json_file_name");
@@ -217,11 +228,11 @@ export default {
       ];
       var items = [];
       for (var i = 0; i < paragraph_container.qas.length; i++) {
-        console.log(paragraph_container.qas[i]);
         var item = {
           Questions: paragraph_container.qas[i].question,
           Answers: paragraph_container.qas[i].answers[0].text,
-          Validation: paragraph_container.qas[i].validation || 'none'
+          Validation: paragraph_container.qas[i].validation || 'none',
+          Comment: paragraph_container.qas[i].val_comment || '',
         };
         items.push(item);
       }
