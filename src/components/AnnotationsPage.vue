@@ -25,7 +25,7 @@
               <b-button
                 :size="'sm'"
                 :variant="'primary'"
-                v-on:click="delete_empty_document(),updateJsonFile()"
+                v-on:click="delete_empty_document(), updateJsonFile()"
                 v-download-data="valid_json"
                 v-download-data:type="'json'"
                 v-download-data:filename="getDownloadFileName()"
@@ -125,7 +125,7 @@
       <b-button
         :size="''"
         :variant="'primary'"
-        v-on:click="delete_empty_document(),updateJsonFile()"
+        v-on:click="delete_empty_document(), updateJsonFile()"
         v-download-data="valid_json"
         v-download-data:type="'json'"
         v-download-data:filename="getDownloadFileName()"
@@ -176,13 +176,13 @@ export default {
       var paragraph_container = this.json.data[this.data_number - 1].paragraphs[
         this.context_number - 1
       ];
-      paragraph_container.qas[row_index].val_comment = val_comment;
+      paragraph_container.qas[row_index].answers[0].val_comment = val_comment;
     },
     addVerification: function(row_index, validation) {
       var paragraph_container = this.json.data[this.data_number - 1].paragraphs[
         this.context_number - 1
       ];
-      paragraph_container.qas[row_index].validation = validation;
+      paragraph_container.qas[row_index].answers[0].validation = validation;
     },
     getSelection: function(fixStr) {
       this.answer = fixStr;
@@ -231,8 +231,8 @@ export default {
         var item = {
           Questions: paragraph_container.qas[i].question,
           Answers: paragraph_container.qas[i].answers[0].text,
-          Validation: paragraph_container.qas[i].validation || 'none',
-          Comment: paragraph_container.qas[i].val_comment || '',
+          Validation: paragraph_container.qas[i].answers[0].validation || 'none',
+          Comment: paragraph_container.qas[i].answers[0].val_comment || '',
         };
         items.push(item);
       }
