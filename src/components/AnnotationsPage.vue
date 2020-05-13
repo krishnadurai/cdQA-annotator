@@ -59,7 +59,7 @@
       <b-table striped hover :items="items" :fields="fields">
         <template slot="Validate" slot-scope="row">
           <b-form-group>
-            <b-form-radio-group id="validation" v-model="row.item.Validation" name="validation">
+            <b-form-radio-group v-model="row.item.Validation">
               <b-form-radio v-on:change="addVerification(row.index, 'good')" value="good">Good</b-form-radio>
               <br>
               <b-form-radio v-on:change="addVerification(row.index, 'bad')" value="bad">Bad</b-form-radio>
@@ -78,25 +78,25 @@
         <b-button
           :size="''"
           :variant="'outline-secondary'"
-          v-on:click="data_number -= 1, context_number = json.data[data_number - 1].paragraphs.length, updateStorageCounters()"
+          v-on:click="data_number -= 1, context_number = json.data[data_number - 1].paragraphs.length, updateStorageCounters(), updateJsonFile()"
         >Previous</b-button> or 
-        <b-button :size="''" :variant="'outline-primary'" v-on:click="data_number += 1, context_number = 1, updateStorageCounters()">Next</b-button>
+        <b-button :size="''" :variant="'outline-primary'" v-on:click="data_number += 1, context_number = 1, updateStorageCounters(), updateJsonFile()">Next</b-button>
       </div>
       <div v-else-if="data_number > 1 && context_number == 1">
         <b-button
           :size="''"
           :variant="'outline-secondary'"
-          v-on:click="data_number -= 1, context_number = json.data[data_number - 1].paragraphs.length, updateStorageCounters()"
+          v-on:click="data_number -= 1, context_number = json.data[data_number - 1].paragraphs.length, updateStorageCounters(), updateJsonFile()"
         >Previous</b-button> or 
-        <b-button :size="''" :variant="'outline-primary'" v-on:click="context_number += 1, updateStorageCounters()">Next</b-button>
+        <b-button :size="''" :variant="'outline-primary'" v-on:click="context_number += 1, updateStorageCounters(), updateJsonFile()">Next</b-button>
       </div>
       <div v-else-if="context_number < json.data[data_number - 1].paragraphs.length">
         <b-button
           :size="''"
           :variant="'outline-secondary'"
-          v-on:click="context_number -= 1, updateStorageCounters()"
+          v-on:click="context_number -= 1, updateStorageCounters(), updateJsonFile()"
         >Previous</b-button> or 
-        <b-button :size="''" :variant="'outline-primary'" v-on:click="context_number += 1, updateStorageCounters()">Next</b-button>
+        <b-button :size="''" :variant="'outline-primary'" v-on:click="context_number += 1, updateStorageCounters(), updateJsonFile()">Next</b-button>
       </div>
       <div v-else>
         <b-button
@@ -107,7 +107,7 @@
         <b-button
           :size="''"
           :variant="'outline-primary'"
-          v-on:click="data_number += 1, context_number = 1, updateStorageCounters()"
+          v-on:click="data_number += 1, context_number = 1, updateStorageCounters(), updateJsonFile()"
         >Next</b-button>
       </div>
       <br>
