@@ -26,7 +26,7 @@
                 :size="'sm'"
                 :variant="'primary'"
                 v-on:click="delete_empty_document(), updateJsonFile()"
-                v-download-data="valid_json"
+                v-download-data="valid_json()"
                 v-download-data:type="'json'"
                 v-download-data:filename="getDownloadFileName()"
               >Download</b-button>
@@ -126,7 +126,7 @@
         :size="''"
         :variant="'primary'"
         v-on:click="delete_empty_document(), updateJsonFile()"
-        v-download-data="valid_json"
+        v-download-data="valid_json()"
         v-download-data:type="'json'"
         v-download-data:filename="getDownloadFileName()"
       >Download</b-button>
@@ -205,8 +205,6 @@ export default {
       var json_file_name = localStorage.getItem("json_file_name");
       return json_file_name.slice(0, -5) + "_labeled.json";
     },
-  },
-  computed: {
     valid_json: function() {
       var json = JSON.stringify(this.json).replace(/[\u007F-\uFFFF]/g, function(
         chr
@@ -215,6 +213,8 @@ export default {
       });
       return json;
     },
+  },
+  computed: {
     autocomplete: function() {
       var idx = [];
       for (var i = 0; i < this.json.data.length; i++) {
