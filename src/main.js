@@ -13,16 +13,27 @@ Vue.use(DownloadData);
 Vue.directive('selection', selection);
 Vue.use(JsonViewer);
 Vue.use(svg);
-Vue.component('vue-bootstrap-typeahead', VueBootstrapTypeahead)
+Vue.component('vue-bootstrap-typeahead', VueBootstrapTypeahead);
 
 import 'bootstrap/dist/css/bootstrap.css'
 import 'bootstrap-vue/dist/bootstrap-vue.css'
 
 Vue.config.productionTip = false
 
+export var store = {
+  debug: true,
+  state: {
+    annotatorName: ""
+  },
+}
+
 new Vue({
   render: h => h(App),
-  directives: { selection }
+  directives: { selection },
+  data: {
+    privateState: {},
+    sharedState: store.state
+  }
 }).$mount('#app')
 
 

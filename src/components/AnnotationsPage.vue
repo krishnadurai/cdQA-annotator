@@ -28,7 +28,7 @@
                 v-on:click="delete_empty_document()"
                 v-download-data="valid_json"
                 v-download-data:type="'json'"
-                v-download-data:filename="'cdqa-v1.1.json'"
+                v-download-data:filename="getDownloadFileName()"
               >Download</b-button>
             </b-nav-item>
           </b-navbar-nav>
@@ -49,22 +49,10 @@
       <b-form-input v-model="question" type="text" placeholder="Type question here..."></b-form-input>
       <br>
 
-      <b-form-input v-model="answer" type="text" placeholder="Type answer here..."></b-form-input>
+      <b-form-textarea v-model="answer" type="text" disabled="true" placeholder="Answer's shown here..."></b-form-textarea>
       <br>
 
-      <b-button :size="''" :variant="'secondary'" v-on:click="addAnnotation()">Add annotation</b-button> or 
-      <b-button
-        v-if="context_number < json.data[data_number - 1].paragraphs.length"
-        :size="''"
-        :variant="'danger'"
-        v-on:click="delete_paragraph()"
-      >Delete paragraph</b-button>
-      <b-button
-        v-else
-        :size="''"
-        :variant="'danger'"
-        v-on:click="delete_paragraph(), data_number += 1, context_number = 1"
-      >Delete paragraph</b-button>
+      <b-button :size="''" :variant="'secondary'" v-on:click="addAnnotation()">Add annotation</b-button>
       <br>
       <br>
 
@@ -75,21 +63,29 @@
       </b-table>
       <br>
 
-      <div v-if="data_number > 1 && context_number == 1">
+      <div v-if="data_number > 1 && context_number == 1 && json.data[data_number - 1].paragraphs.length == 1">
         <b-button
           :size="''"
           :variant="'outline-secondary'"
-          v-on:click="data_number -= 1, context_number = json.data[data_number - 1].paragraphs.length"
+          v-on:click="data_number -= 1, context_number = json.data[data_number - 1].paragraphs.length, updateStorageCounters()"
         >Previous</b-button> or 
-        <b-button :size="''" :variant="'outline-primary'" v-on:click="context_number += 1">Next</b-button>
+        <b-button :size="''" :variant="'outline-primary'" v-on:click="data_number += 1, context_number = 1, updateStorageCounters()">Next</b-button>
+      </div>
+      <div v-else-if="data_number > 1 && context_number == 1">
+        <b-button
+          :size="''"
+          :variant="'outline-secondary'"
+          v-on:click="data_number -= 1, context_number = json.data[data_number - 1].paragraphs.length, updateStorageCounters()"
+        >Previous</b-button> or 
+        <b-button :size="''" :variant="'outline-primary'" v-on:click="context_number += 1, updateStorageCounters()">Next</b-button>
       </div>
       <div v-else-if="context_number < json.data[data_number - 1].paragraphs.length">
         <b-button
           :size="''"
           :variant="'outline-secondary'"
-          v-on:click="context_number -= 1"
+          v-on:click="context_number -= 1, updateStorageCounters()"
         >Previous</b-button> or 
-        <b-button :size="''" :variant="'outline-primary'" v-on:click="context_number += 1">Next</b-button>
+        <b-button :size="''" :variant="'outline-primary'" v-on:click="context_number += 1, updateStorageCounters()">Next</b-button>
       </div>
       <div v-else>
         <b-button
@@ -100,7 +96,7 @@
         <b-button
           :size="''"
           :variant="'outline-primary'"
-          v-on:click="data_number += 1, context_number = 1"
+          v-on:click="data_number += 1, context_number = 1, updateStorageCounters()"
         >Next</b-button>
       </div>
       <br>
@@ -121,7 +117,7 @@
         v-on:click="delete_empty_document()"
         v-download-data="valid_json"
         v-download-data:type="'json'"
-        v-download-data:filename="'cdqa-v1.1.json'"
+        v-download-data:filename="getDownloadFileName()"
       >Download</b-button>
     </div>
   </div>
@@ -129,6 +125,7 @@
 
 <script>
 
+import { store } from "../main.js";
 const uuidv4 = require('uuid/v4');
 
 export default {
@@ -136,8 +133,8 @@ export default {
   props: ["json"],
   data: function() {
     return {
-      data_number: 1,
-      context_number: 1,
+      data_number: parseInt(localStorage.getItem("data_number")),
+      context_number: parseInt(localStorage.getItem("context_number")),
       question: "",
       answer: "",
       fields: ["Questions", "Answers", "Edit"],
@@ -152,7 +149,7 @@ export default {
       var qa = {
         question: this.question,
         id: uuidv4(),
-        answers: [{ answer_start: this.answer_start, text: this.answer }]
+        answers: [{ answer_start: this.answer_start, text: this.answer, annotator_name: store.state.annotatorName}],
       };
       paragraph_container.qas.push(qa);
       this.question = "";
@@ -167,17 +164,21 @@ export default {
     getSelection: function(fixStr) {
       this.answer = fixStr;
     },
-    delete_paragraph: function() {
-      var paragraph_container = this.json.data[this.data_number - 1].paragraphs;
-      paragraph_container.splice([this.context_number - 1], 1);
-    },
     delete_empty_document: function() {
       for (var i in this.json.data) {
         if (this.json.data[i].paragraphs.length == 0) {
           this.json.data.splice(i, 1);
         }
       }
-    }
+    },
+    updateStorageCounters: function() {
+      localStorage.setItem("data_number", this.data_number);
+      localStorage.setItem("context_number", this.context_number);
+    },
+    getDownloadFileName: function() {
+      var json_file_name = localStorage.getItem("json_file_name");
+      return json_file_name.slice(0, -5) + "_labeled.json";
+    },
   },
   computed: {
     valid_json: function() {
